@@ -3,51 +3,62 @@ import { taskService } from "~/services/taskService";
 // importa o store
 import { useTasksStore } from "~/stores/tasks";
 
-export function useTasks(){
+export function useTasks() {
+  const store = useTasksStore();
 
-  const store = useTasksStore()
-
-  // função que lista as tasks
+  // Busca todas as tasks
   const fetchTasks = async () => {
-    const tasks = await taskService.list()
-    // garante que cada task tenha `done`
-    store.tasks = tasks.map(t => ({ ...t, done: t.done ?? false }))
-  }
+    const tasks = await taskService.list();
+    store.tasks = tasks.map(t => ({
+      ...t,
+      done: t.done ?? false, // garante que sempre exista "done"
+    }));
+  };
 
-  // função que cria uma nova task
+  // Cria uma nova task
   const addTask = async (task: any) => {
-    const newTask = await taskService.create({ ...task, done: false })
-    store.tasks.push(newTask)
-  }
+    const newTask = await taskService.create({
+      ...task,
+      done: false,
+    });
+    store.tasks.push(newTask);
+  };
 
-  // função que atualiza a task
+  // Atualiza uma task existente
   const updateTask = async (id: number, task: any) => {
-    const updated = await taskService.update(id, task)
-    // Procura no array tasks a posição da task que tem o id
-    const index = store.tasks.findIndex(t => t.id === id)
-    // Se não encontrar, retorna -1. Verifica se encontrou a task (ou seja, o índice não é -1).
-    if (index !== -1) store.tasks[index] = updated
-  }
+    const updated = await taskService.update(id, task);
+    if (!updated) return; // se o backend não encontrou a task
 
-  // função deleta a task
+    const index = store.tasks.findIndex(t => t.id === id);
+    if (index !== -1) {
+      store.tasks[index] = updated;
+    }
+  };
+
+  // Deleta uma task
   const deleteTask = async (id: number) => {
-    await taskService.remove(id)
-    store.tasks = store.tasks.filter(t => t.id !== id)
-  }
+    const success = await taskService.remove(id);
+    if (success) {
+      store.tasks = store.tasks.filter(t => t.id !== id);
+    }
+  };
 
-  // função que finaliza ou desfaz a task
+  // Alterna status "done"
   const toggleTaskDone = async (id: number) => {
-    const task = store.tasks.find(t => t.id === id)
-    if (!task) return
-    const updated = await taskService.toggleDone(id, !task.done)
-    task.done = updated.done // mantém sincronizado
-  }
+    const task = store.tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const updated = await taskService.toggleDone(id, !task.done);
+    if (updated) {
+      task.done = updated.done;
+    }
+  };
 
   return {
-    fetchTasks,      // Retorna a função que busca todas as tasks do backend e atualiza a store
-    addTask,         // Retorna a função que cria uma nova task e adiciona na store
-    updateTask,      // Retorna a função que atualiza uma task existente na store e no backend
-    deleteTask,      // Retorna a função que remove uma task da store e do backend
-    toggleTaskDone   // Retorna a função que alterna o status "done" de uma task na store e no backend
-  }
+    fetchTasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    toggleTaskDone,
+  };
 }
