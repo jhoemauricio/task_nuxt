@@ -52,13 +52,13 @@ Acesse `http://localhost:3000`.
 
 ---
 
-## 🏗 Estrutura do projeto
+## 🗂️ Estrutura do projeto
 
 ```
 ├─ composables/      # Funções reutilizáveis
 ├─ services/         # Serviços para CRUD
 ├─ stores/           # Stores Pinia
-├─ server/api/       # Endpoints backend
+├─ server/api/       # Endpoints backend unificados
 ├─ pages/            # Páginas Nuxt
 ├─ components/       # Componentes Vue
 ├─ assets/           # Imagens e estilos
@@ -77,12 +77,14 @@ Acesse `http://localhost:3000`.
 
 ## ⚡ Deploy
 
-Pode ser publicado facilmente no **Vercel** ou plataformas compatíveis com Nuxt 3.
+Pode ser publicado facilmente no **Vercel** ou em qualquer plataforma compatível com Nuxt 3.  
+> A API de tarefas está centralizada em um único arquivo (`server/api/tasks.ts`) que gerencia todos os métodos (GET, POST, PUT, DELETE).
 
 ---
 
 ## ✨ Observações
 
-* O CRUD atual salva tarefas apenas em memória. Para persistência real, recomenda-se integrar um banco de dados (Ex: Supabase, PlanetScale, MongoDB Atlas).
+* O CRUD atual **não persiste em banco de dados**. As tarefas ficam em memória apenas durante a execução do servidor.  
+* Para persistência real, recomenda-se integrar um banco de dados (Ex: Supabase, PlanetScale, MongoDB Atlas).
 
 ---
