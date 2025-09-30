@@ -9,6 +9,10 @@ export function useTasks() {
   // Busca todas as tasks
   const fetchTasks = async () => {
     const tasks = await taskService.list();
+     // ...t → copia todas as propriedades da tarefa original (id, title, description, etc.).
+    // done: t.done ?? false → garante que exista a propriedade done.
+   // Se t.done já existe, mantém o valor.
+  // Se t.done for undefined ou null, atribui false.
     store.tasks = tasks.map(t => ({
       ...t,
       done: t.done ?? false, // garante que sempre exista "done"
